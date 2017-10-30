@@ -1,7 +1,9 @@
 /*
  * Display4.c
  * 
- * Copyright 2017  <pi@raspberrypi>
+ * Sample code to control a 4 digit 7-segment LED display.
+ * 
+ * Copyright 2017  <redeyerob@gmail.com>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +40,15 @@
 #define DIGIT_DELAY() delayMicroseconds(DIGIT_DELAY_MS) 
 #define TEST_STEP_DELAY() delayMicroseconds(TEST_STEP_DELAY_MS)
 
+#define HELP_TEXT \
+	" [-t] [-c[<Value>]] [-d] [-h] [-s <secs>] [-v[<value>]]\n"\
+	"	-t 	Run Display Test, loops thru all numbers on each digit\n"\
+	"	-c  Runs countdown from <Value> to zero, 9999 default \n" \
+	"	-d  Debug mode \n" \
+	"	-h  This help\n" \
+	"	-s  Time in secs to display the value, 10 sec default\n" \
+	"	-v  Value to display, default 1234 \n" 
+	
 /* 
  * Lookup Table to determine Max Value +1 indexed by num display digits
  */
@@ -258,23 +269,24 @@ int ParseCmdLine(int argc, char **argv)
 	int Value = 1234;
 	int opt;
 	
-	while ((opt = getopt(argc, argv, "hc:tds:v:")) != -1)
+	while ((opt = getopt(argc, argv, "hc::tds:v::")) != -1)
 	{
-		DisplayValue = FALSE;
 		switch (opt) 
 		{
 			case 't':
+				DisplayValue = FALSE;
 				runTest = TRUE;
 				break;
 			
 			case 'c':
+				DisplayValue = FALSE;
 				runCountDown = TRUE;
 				if( optarg != NULL)
 				{
 					countDownValue = atoi(optarg);
 					if( countDownValue == 0 )
 					{
-						printf( "Invalid display time: %s\n", optarg);
+						printf( "Invalid countdown value: %s\n", optarg);
 						exit(EXIT_FAILURE);
 					}
 				}
@@ -286,10 +298,14 @@ int ParseCmdLine(int argc, char **argv)
 				
 			case 'v':
 				DisplayValue = TRUE;
-				Value = atoi(optarg);
+				if( optarg != NULL)
+				{
+					Value = atoi(optarg);
+				}
 				break;
 				
 			case 's':
+			DisplayValue = TRUE;
 				displayTime = atoi(optarg)*1000000;
 				if( displayTime == 0 )
 				{
@@ -301,11 +317,8 @@ int ParseCmdLine(int argc, char **argv)
 			case '?':
 			case 'h':
 			default:
-				printf(
-					"Usage: %s [-t] [-c] [-d] [-h] [-s secs] [-v value] "\
-					" [-m]\n", 
-					argv[0]);
-					exit(EXIT_FAILURE);
+				printf("Usage: %s %s", argv[0],	HELP_TEXT);
+				exit(EXIT_FAILURE);
 				break;
 		}
 	}
