@@ -23,7 +23,6 @@
  * 
  */
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -88,6 +87,8 @@ Display
  */
 const unsigned char GPIO_Array[12] = {7,0,2,3,1,26,4,27,28,5,6,29};
 
+const char DisplayDigit[4] = { 29, 28, 27, 26 };
+
 #define	G_BOTTOM	0b11111110 
 #define	G_MIDDLE	0b11111101
 #define G_DECIMAL	0b11111011
@@ -99,7 +100,7 @@ const unsigned char GPIO_Array[12] = {7,0,2,3,1,26,4,27,28,5,6,29};
  
 /*
  * Lookup table of bytes indexed by numerical character.
- * Each byte represnts the bit valuer for the forst 8 GPIOs
+ * Each byte represnts the bit value for the forst 8 GPIOs
  */
 const char Number[10] = {	
 	(char)~(G_MIDDLE & G_DECIMAL),								// 0
@@ -117,8 +118,6 @@ const char Number[10] = {
 const char DecimalPoint = {G_DECIMAL};
 
 const char MinusSign = {G_MIDDLE};
-
-const char DisplayDigit[4] = { 29, 28, 27, 26 };
 	
 static int DisplayValue = TRUE;
 static int runTest = FALSE;
@@ -235,7 +234,6 @@ void Test()
 		DisplayOn(j);
 		for( i=0; i < 10; i++)
 		{
-			//printf("Loop %d \n", i);
 			digitalWriteByte(Number[i]);
 			TEST_STEP_DELAY();
 		}
@@ -262,7 +260,8 @@ void CountDown()
 }
 
 
-/* Parse the command line options.
+/* 
+ * Parse the command line options.
 */
 int ParseCmdLine(int argc, char **argv)
 {
@@ -326,7 +325,8 @@ int ParseCmdLine(int argc, char **argv)
 	return(Value);
 }
 
-/* Demo use of the 7 segment display.
+/* 
+ * Demo use of the 7 segment display.
 */
 int main(int argc, char **argv)
 {
@@ -343,9 +343,15 @@ int main(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 	
-	if( runTest ) {Test();}
+	if( runTest )
+	{
+		Test();
+	}
 	
-	if( runCountDown ) {CountDown();}
+	if( runCountDown ) 
+	{
+		CountDown();
+	}
 	
 	if( DisplayValue )
 	{
